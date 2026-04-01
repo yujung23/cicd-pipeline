@@ -1,3 +1,13 @@
 spring:
   application:
     name: trade
+
+server:
+  port: 8080
+
+binance:
+  ws-url: wss://stream.binance.com/ws/btcusdt@trade
+
+stream:
+  buffer-size: 500
+  limit-rate: 20
