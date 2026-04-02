@@ -39,6 +39,13 @@ Binance WebSocket에 연결해 실시간 체결 데이터를 수신하는 핵심
 | **latest** | `?strategy=latest` | 최신 값 1개만 유지, 나머지 DROP | 메모리 안정 / 데이터 유실 |
 | **limitRate** | `?strategy=limitRate` | 소비자 처리량 최대 20개로 제한 | 시스템 보호 / 처리량 제한 |
 
+
+buffer와 latest는 데이터가 넘쳤을 때 처리하는 전략,
+limitRate는 애초에 처리 가능한 만큼만 요청하도록 제어하는 방식으로 백프레셔를 구현합니다.
+
+- limitRate = 소비 속도 조절 (request 조절)
+- buffer/latest = 넘친 데이터 처리 방식
+
 드롭 건수는 `AtomicLong`으로 카운트해 `/api/trades/stats`로 조회 가능합니다.
 
 ### TradeController
@@ -92,7 +99,7 @@ binance:
   ws-url: wss://stream.binance.com/ws/btcusdt@trade/ethusdt@trade/xrpusdt@trade
 
 stream:
-  buffer-size: 500   # 현재 50으로 하드코딩됨
+  buffer-size: 300   # 전략별 비교를 위해 100으로 조절
   limit-rate: 20
 
 server:
