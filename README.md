@@ -13,6 +13,7 @@ Binance WebSocket
        └→ TradeStreamService  (백프레셔 전략 선택)
             └→ TradeController (SSE / 드롭 통계 API)
 ```
+<img width="526" height="708" alt="image" src="https://github.com/user-attachments/assets/9dd582d9-34d3-426b-9432-1f21e14c3ccf" />
 
 ---
 
