@@ -29,25 +29,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-// ── Frontend build integration ────────────────────────────────────────────────
-def frontendDir = file("$rootDir/../reactive-stream-trade-frontend")
-def staticDir   = file("$rootDir/src/main/resources/static")
-def npmCmd      = System.getProperty("os.name").toLowerCase().contains("windows") ? "npm.cmd" : "npm"
-
-task npmInstall(type: Exec) {
-	workingDir frontendDir
-	commandLine npmCmd, 'install'
-}
-
-task buildFrontend(type: Exec, dependsOn: npmInstall) {
-	workingDir frontendDir
-	commandLine npmCmd, 'run', 'build'
-}
-
-task copyFrontend(type: Copy, dependsOn: buildFrontend) {
-	from "$frontendDir/build"
-	into staticDir
-}
-
-processResources.dependsOn copyFrontend
