@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     def activeColor = sh(
-                        script: "grep -q 'server sw_team_6_blue:8080;' deploy/nginx.conf && echo blue || echo green",
+                        script: "docker exec sw_team_6_nginx cat /etc/nginx/nginx.conf | grep -q 'server sw_team_6_blue:8080;' && echo blue || echo green",
                         returnStdout: true
                     ).trim()
 
