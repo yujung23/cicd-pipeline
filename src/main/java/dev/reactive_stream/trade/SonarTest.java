@@ -6,7 +6,7 @@ public class SonarTest {
         String password = getPasswordFromEnv();
 
         if (password == null || password.isBlank()) {
-            System.out.println("비밀번호가 설정되지 않았습니다.");
+//            System.out.println("비밀번호가 설정되지 않았습니다.");
             return;
         }
 
@@ -21,7 +21,7 @@ public class SonarTest {
     // 중복 제거
     private static void printMessage(String message, int count) {
         for (int i = 0; i < count; i++) {
-            System.out.println(message);
+
         }
     }
 }
