@@ -11,3 +11,12 @@ binance:
 stream:
   buffer-size: 500
   limit-rate: 20
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
