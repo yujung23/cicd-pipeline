@@ -1,12 +1,12 @@
 services:
   blue:
-    image: myapp:latest
+    image: sw_team_6_app:latest
     container_name: sw_team_6_blue
     ports:
       - "8502:8080"
 
   green:
-    image: myapp:latest
+    image: sw_team_6_app:latest
     container_name: sw_team_6_green
     ports:
       - "8503:8080"

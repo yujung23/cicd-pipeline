@@ -34,8 +34,8 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                    docker build -f deploy/Dockerfile -t myapp:${BUILD_NUMBER} .
-                    docker tag myapp:${BUILD_NUMBER} myapp:latest
+                    docker build -f deploy/Dockerfile -t sw_team_6_app:${BUILD_NUMBER} .
+                    docker tag sw_team_6_app:${BUILD_NUMBER} sw_team_6_app:latest
                 '''
             }
         }
