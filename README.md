@@ -1,5 +1,6 @@
 # Reactive Stream Trade
 
+안녕하세요
 Binance WebSocket에서 실시간 암호화폐 체결 데이터를 수신하고,
 Spring WebFlux + SSE로 브라우저에 스트리밍하는 프로젝트입니다.
 
