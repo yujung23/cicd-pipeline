@@ -1,0 +1,165 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/yujung23/cicd-pipeline.git'
+            }
+        }
+
+        stage('Gradle build') {
+            steps {
+                sh '''
+                    chmod +x gradlew
+                    ./gradlew clean build
+                '''
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv(installationName: 'sonarqube', credentialsId: 'sw-team-6') {
+                    sh './gradlew sonar'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker build -f deploy/Dockerfile -t myapp:${BUILD_NUMBER} .
+                    docker tag myapp:${BUILD_NUMBER} myapp:latest
+                '''
+            }
+        }
+
+        stage('Determine Active Color') {
+            steps {
+                script {
+                    def activeColor = sh(
+                        script: "grep -q 'server sw_team_6_blue:8080;' deploy/nginx.conf && echo blue || echo green",
+                        returnStdout: true
+                    ).trim()
+
+                    env.ACTIVE_COLOR = activeColor
+                    env.IDLE_COLOR = (activeColor == 'blue') ? 'green' : 'blue'
+
+                    echo "ACTIVE_COLOR=${env.ACTIVE_COLOR}"
+                    echo "IDLE_COLOR=${env.IDLE_COLOR}"
+                }
+            }
+        }
+
+        stage('Deploy Idle Color') {
+            steps {
+                sh '''
+                    cd deploy
+                    docker-compose up -d --force-recreate ${IDLE_COLOR}
+                '''
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh '''
+                    for i in $(seq 1 20); do
+                        if docker logs sw_team_6_${IDLE_COLOR} 2>&1 | grep -q "Started"; then
+                            echo "Health check success"
+                            exit 0
+                        fi
+                        echo "Waiting for ${IDLE_COLOR}..."
+                        sleep 3
+                    done
+
+                    echo "Health check failed"
+                    docker logs sw_team_6_${IDLE_COLOR} --tail 100 || true
+                    exit 1
+                '''
+            }
+        }
+
+        stage('Switch Nginx') {
+            steps {
+                sh '''
+                    if [ "${IDLE_COLOR}" = "blue" ]; then
+cat <<'EOF' > deploy/nginx.conf
+events {}
+
+http {
+  upstream backend {
+    server sw_team_6_blue:8080;
+  }
+
+  server {
+    listen 80;
+
+    location / {
+      proxy_pass http://backend;
+    }
+  }
+}
+EOF
+                    else
+cat <<'EOF' > deploy/nginx.conf
+events {}
+
+http {
+  upstream backend {
+    server sw_team_6_green:8080;
+  }
+
+  server {
+    listen 80;
+
+    location / {
+      proxy_pass http://backend;
+    }
+  }
+}
+EOF
+                    fi
+
+                    cd deploy
+                    docker-compose up -d --force-recreate nginx
+                '''
+            }
+        }
+
+        stage('Wait Before Stop Old Color') {
+            steps {
+                sh '''
+                    echo "Waiting 10 seconds before stopping old color..."
+                    sleep 10
+                '''
+            }
+        }
+
+        stage('Stop Old Color') {
+            steps {
+                sh '''
+                    echo "Stopping old color: ${ACTIVE_COLOR}"
+                    docker stop sw_team_6_${ACTIVE_COLOR} || true
+                    docker rm sw_team_6_${ACTIVE_COLOR} || true
+                '''
+            }
+        }
+
+
+        stage('Verify Deploy') {
+            steps {
+                sh '''
+                    docker ps -a
+                    docker logs sw_team_6_nginx --tail 50 || true
+                    docker logs sw_team_6_${IDLE_COLOR} --tail 50 || true
+                '''
+            }
+        }
+    }
+}

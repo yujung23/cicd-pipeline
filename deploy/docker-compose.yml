@@ -1,0 +1,23 @@
+services:
+  blue:
+    image: myapp:latest
+    container_name: sw_team_6_blue
+    ports:
+      - "8502:8080"
+
+  green:
+    image: myapp:latest
+    container_name: sw_team_6_green
+    ports:
+      - "8503:8080"
+
+  nginx:
+    image: nginx:latest
+    container_name: sw_team_6_nginx
+    ports:
+      - "8504:80"
+    volumes:
+      - /var/lib/docker/volumes/jenkins_home/_data/workspace/stream-pipeline/deploy/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - blue
+      - green
