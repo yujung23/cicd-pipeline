@@ -1,17 +1,24 @@
 package dev.reactive_stream.trade;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SonarTest {
 
-    public static void main(String[] args) {
-        String password = getPasswordFromEnv();
+    private static final Logger log = LoggerFactory.getLogger(SonarTest.class);
 
-        if (password == null || password.isBlank()) {
+    public static void main(String[] args) {
+        String password = System.getenv("APP_PASSWORD");
+
+        if (isInvalid(password)) {
+            log.warn("APP_PASSWORD is not set");
             return;
         }
+
+        log.info("Application started successfully");
     }
 
-    // 환경 변수에서 비밀번호 가져오기 (보안 개선)
-    private static String getPasswordFromEnv() {
-        return System.getenv("APP_PASSWORD");
+    private static boolean isInvalid(String value) {
+        return value == null || value.isBlank();
     }
 }
