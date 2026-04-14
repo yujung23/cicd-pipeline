@@ -15,7 +15,7 @@ public class SonarTest {
             return;
         }
 
-        log.info("Application started successfully at where?");
+        log.info("Application started successfully at blue");
     }
 
     private static boolean isInvalid(String value) {
