@@ -179,9 +179,7 @@ Blue-Green 배포 시 기존 컨테이너가 즉시 종료되면,
 
 ### Jenkins
 
-CI/CD 파이프라인을 실행하는 핵심 컴포넌트.
-
-역할:
+CI/CD 파이프라인을 실행
 
 - GitHub Webhook 수신
 - Build / Test 수행
@@ -195,10 +193,6 @@ CI/CD 파이프라인을 실행하는 핵심 컴포넌트.
 
 ### SonarQube
 
-코드 품질을 자동으로 검사하는 정적 분석 도구.
-
-역할:
-
 - 코드 품질 분석
 - 버그 / 취약점 탐지
 - 코드 커버리지 검사
@@ -208,9 +202,7 @@ CI/CD 파이프라인을 실행하는 핵심 컴포넌트.
 
 ### Nginx
 
-Reverse Proxy 및 Load Balancer 역할.
-
-역할:
+Reverse Proxy 및 Load Balancer 역할
 
 - 사용자 요청 수신
 - Blue / Green 트래픽 라우팅
@@ -224,10 +216,10 @@ Reverse Proxy 및 Load Balancer 역할.
 
 - Code Coverage < 80%
 - Duplicated Lines > 3%
-- Maintainability Rating > A
+- Maintainability Rating > B
 - Reliability Rating > A
 - Security Issues > 0
-- Issues > 0
+- Issues > 5
 
 ---
 
