@@ -134,15 +134,6 @@ EOF
             }
         }
 
-        stage('Wait Before Stop Old Color') {
-            steps {
-                sh '''
-                    echo "Waiting 10 seconds before stopping old color..."
-                    sleep 10
-                '''
-            }
-        }
-
         stage('Stop Old Color') {
             steps {
                 sh '''
